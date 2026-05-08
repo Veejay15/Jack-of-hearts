@@ -18,12 +18,18 @@ export default function Countdown({
 
   const remaining = Math.max(0, endsAt - now);
   const seconds = Math.ceil(remaining / 1000);
+  const expired = remaining <= 0;
 
   useEffect(() => {
-    if (remaining <= 0 && onZero) onZero();
-    // intentionally only when remaining transitions through 0
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [remaining <= 0]);
+    if (!expired || !onZero) return;
+    // Fire immediately, then keep retrying every 2s. The server may reject
+    // the advance until its own clock crosses phaseEndsAt (we may be ahead),
+    // and the parent will unmount/remount this component once the phase
+    // actually changes, which clears the interval.
+    onZero();
+    const id = setInterval(() => onZero(), 2000);
+    return () => clearInterval(id);
+  }, [expired, onZero]);
 
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
