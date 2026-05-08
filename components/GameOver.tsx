@@ -1,0 +1,98 @@
+"use client";
+
+import SuitIcon from "./SuitIcon";
+import type { ClientGameState } from "@/lib/types";
+
+export default function GameOver({
+  state,
+  isHost,
+  onPlayAgain,
+}: {
+  state: ClientGameState;
+  isHost: boolean;
+  onPlayAgain: () => void;
+}) {
+  const jack = state.players.find((p) => p.id === state.jackId);
+  const playersWon = state.winner === "players";
+
+  return (
+    <div className="mx-auto max-w-5xl text-center">
+      <div
+        className={`rounded-3xl border p-12 ${
+          playersWon
+            ? "border-emerald-400/40 bg-emerald-400/10"
+            : "border-crimson/40 bg-crimson/10"
+        }`}
+      >
+        <div className="text-sm uppercase tracking-[0.4em] text-gold/80">
+          Game over
+        </div>
+        <h1 className="mt-4 text-6xl font-display font-bold">
+          {playersWon ? "Players win" : "The Jack wins"}
+        </h1>
+        <p className="mt-4 text-xl text-white/80">
+          The Jack of Hearts was{" "}
+          <span className="font-bold text-gold">{jack?.name ?? "?"}</span>.
+        </p>
+      </div>
+
+      <section className="mt-10 rounded-2xl border border-white/10 bg-velvet/40 p-8 text-left">
+        <h2 className="text-base uppercase tracking-[0.25em] text-gold/80">
+          Round recap
+        </h2>
+        <ol className="mt-6 space-y-6">
+          {state.history.map((h) => (
+            <li key={h.round} className="rounded-2xl bg-ink/40 p-6">
+              <div className="mb-4 text-sm uppercase tracking-wider text-white/60">
+                Round {h.round}
+              </div>
+              <ul className="divide-y divide-white/10">
+                {h.outcomes.map((o) => (
+                  <li
+                    key={o.playerId}
+                    className="flex items-center justify-between py-3 text-lg"
+                  >
+                    <span className="font-medium">{o.name}</span>
+                    <span className="flex items-center gap-4">
+                      <span className="text-3xl" title="actual suit">
+                        <SuitIcon suit={o.actualSuit} />
+                      </span>
+                      <span className="text-white/40">→</span>
+                      <span className="text-3xl" title="guess">
+                        {o.guess ? (
+                          <SuitIcon suit={o.guess} />
+                        ) : (
+                          <span className="text-white/30">—</span>
+                        )}
+                      </span>
+                      <span
+                        className={`min-w-[7rem] text-right text-sm font-semibold uppercase tracking-wider ${
+                          o.survived ? "text-emerald-300" : "text-crimson"
+                        }`}
+                      >
+                        {o.survived ? "Survived" : "Eliminated"}
+                      </span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {isHost ? (
+        <button
+          onClick={onPlayAgain}
+          className="mt-8 rounded-xl bg-crimson px-8 py-3 font-semibold uppercase tracking-wider text-white transition hover:bg-crimson/90"
+        >
+          Play again
+        </button>
+      ) : (
+        <p className="mt-8 text-sm text-white/60">
+          Waiting for the host to start a new game…
+        </p>
+      )}
+    </div>
+  );
+}
