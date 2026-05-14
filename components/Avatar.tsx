@@ -2,8 +2,12 @@
 
 /**
  * DiceBear-hosted SVG avatar.
- * Style: "adventurer" — colorful cartoon characters with hair/clothes/etc.
- * Cached aggressively by the browser since the URL is deterministic.
+ * Style: "lorelei" — anime/manga-style hand-drawn portraits with diverse
+ * hair / eyes / expressions. Background palette is moody slate/charcoal/
+ * crimson to match the dystopian Alice-in-Borderland vibe rather than the
+ * default pastel.
+ *
+ * The URL is deterministic per seed so the browser caches each avatar.
  */
 export default function Avatar({
   seed,
@@ -16,9 +20,12 @@ export default function Avatar({
   dead?: boolean;
   className?: string;
 }) {
-  const src = `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(
+  // Darker, more cinematic background colors — slate, charcoal, deep crimson,
+  // muted teal — so the portraits read as characters under harsh game-arena
+  // lighting rather than friendly stickers.
+  const src = `https://api.dicebear.com/9.x/lorelei/svg?seed=${encodeURIComponent(
     seed,
-  )}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&radius=50`;
+  )}&backgroundColor=1f2937,334155,4c1d24,1e3a8a,365314,4a044e&radius=50`;
 
   return (
     <div
