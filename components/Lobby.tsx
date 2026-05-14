@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Avatar from "./Avatar";
 import type { ClientGameState } from "@/lib/types";
 import { MIN_PLAYERS } from "@/lib/types";
 
@@ -43,23 +44,26 @@ export default function Lobby({
             </span>
           )}
         </div>
-        <ul className="space-y-2">
+        <ul className="grid grid-cols-2 gap-3 md:grid-cols-3">
           {state.players.map((p) => (
             <li
               key={p.id}
-              className="flex items-center justify-between rounded-lg bg-ink/50 px-3 py-2"
+              className="flex items-center gap-3 rounded-lg bg-ink/50 px-3 py-2"
             >
-              <span>
-                {p.name}{" "}
-                {p.id === state.you.id && (
-                  <span className="text-gold/80">(you)</span>
-                )}
+              <Avatar seed={p.avatarSeed} size={44} />
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-medium">
+                  {p.name}
+                  {p.id === state.you.id && (
+                    <span className="ml-1 text-gold/80">(you)</span>
+                  )}
+                </div>
                 {p.id === state.hostId && (
-                  <span className="ml-2 text-xs uppercase tracking-wider text-gold/70">
+                  <div className="text-[10px] uppercase tracking-wider text-gold/70">
                     host
-                  </span>
+                  </div>
                 )}
-              </span>
+              </div>
             </li>
           ))}
         </ul>

@@ -11,6 +11,7 @@ export const dynamic = "force-dynamic";
 
 const Body = z.object({
   name: z.string().trim().min(1).max(24),
+  avatarSeed: z.string().trim().min(1).max(64).optional(),
 });
 
 export async function POST(
@@ -22,7 +23,7 @@ export async function POST(
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
-  const { name } = parsed.data;
+  const { name, avatarSeed } = parsed.data;
 
   const room = await getRoom(code);
   if (!room) {
@@ -50,6 +51,7 @@ export async function POST(
   room.players[playerId] = {
     id: playerId,
     name,
+    avatarSeed: avatarSeed ?? playerId,
     suit: null,
     alive: true,
     joinedAt: now,

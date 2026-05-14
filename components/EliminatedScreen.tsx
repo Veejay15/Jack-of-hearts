@@ -1,5 +1,6 @@
 "use client";
 
+import Avatar from "./Avatar";
 import Countdown from "./Countdown";
 import type { ClientGameState } from "@/lib/types";
 
@@ -21,7 +22,10 @@ export default function EliminatedScreen({
   return (
     <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
       <div className="rounded-3xl border-2 border-crimson/60 bg-crimson/15 px-10 py-12 shadow-[0_0_60px_rgba(192,38,58,0.25)]">
-        <div className="text-sm uppercase tracking-[0.4em] text-crimson">
+        <div className="flex flex-col items-center">
+          <Avatar seed={state.you.avatarSeed} size={140} dead />
+        </div>
+        <div className="mt-6 text-sm uppercase tracking-[0.4em] text-crimson">
           Out
         </div>
         <h1 className="mt-3 font-display text-6xl font-bold text-crimson">
@@ -53,9 +57,10 @@ export default function EliminatedScreen({
           {survivors.map((p) => (
             <li
               key={p.id}
-              className="rounded-lg border border-white/10 bg-ink/40 px-3 py-2 text-sm"
+              className="flex items-center gap-2 rounded-lg border border-white/10 bg-ink/40 px-3 py-2 text-sm"
             >
-              {p.name}
+              <Avatar seed={p.avatarSeed} size={36} />
+              <span className="truncate">{p.name}</span>
             </li>
           ))}
           {survivors.length === 0 && (

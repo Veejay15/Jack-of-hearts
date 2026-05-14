@@ -84,6 +84,7 @@ export default function DiscussionRound({
             <div className="mx-auto max-w-sm">
               <PlayerCard
                 name={state.you.name}
+                avatarSeed={state.you.avatarSeed}
                 suit={null}
                 alive={state.you.alive}
                 isYou
@@ -108,6 +109,7 @@ export default function DiscussionRound({
                   >
                     <PlayerCard
                       name={p.name}
+                      avatarSeed={p.avatarSeed}
                       suit={p.suit ?? null}
                       alive={p.alive}
                       isYou={false}

@@ -1,5 +1,6 @@
 "use client";
 
+import Avatar from "./Avatar";
 import SuitIcon from "./SuitIcon";
 import type { ClientGameState } from "@/lib/types";
 
@@ -30,10 +31,15 @@ export default function GameOver({
         <h1 className="mt-4 text-6xl font-display font-bold">
           {playersWon ? "Players win" : "The Jack wins"}
         </h1>
-        <p className="mt-4 text-xl text-white/80">
-          The Jack of Hearts was{" "}
-          <span className="font-bold text-gold">{jack?.name ?? "?"}</span>.
-        </p>
+        {jack && (
+          <div className="mt-6 flex flex-col items-center">
+            <Avatar seed={jack.avatarSeed} size={120} dead={!jack.alive} />
+            <p className="mt-3 text-xl text-white/80">
+              The Jack of Hearts was{" "}
+              <span className="font-bold text-gold">{jack.name}</span>.
+            </p>
+          </div>
+        )}
       </div>
 
       <section className="mt-10 rounded-2xl border border-white/10 bg-velvet/40 p-8 text-left">
@@ -47,34 +53,46 @@ export default function GameOver({
                 Round {h.round}
               </div>
               <ul className="divide-y divide-white/10">
-                {h.outcomes.map((o) => (
-                  <li
-                    key={o.playerId}
-                    className="flex items-center justify-between py-3 text-lg"
-                  >
-                    <span className="font-medium">{o.name}</span>
-                    <span className="flex items-center gap-4">
-                      <span className="text-3xl" title="actual suit">
-                        <SuitIcon suit={o.actualSuit} />
-                      </span>
-                      <span className="text-white/40">→</span>
-                      <span className="text-3xl" title="guess">
-                        {o.guess ? (
-                          <SuitIcon suit={o.guess} />
-                        ) : (
-                          <span className="text-white/30">—</span>
+                {h.outcomes.map((o) => {
+                  const player = state.players.find((p) => p.id === o.playerId);
+                  return (
+                    <li
+                      key={o.playerId}
+                      className="flex items-center justify-between py-3 text-lg"
+                    >
+                      <span className="flex items-center gap-3 font-medium">
+                        {player && (
+                          <Avatar
+                            seed={player.avatarSeed}
+                            size={40}
+                            dead={!o.survived}
+                          />
                         )}
+                        <span>{o.name}</span>
                       </span>
-                      <span
-                        className={`min-w-[7rem] text-right text-sm font-semibold uppercase tracking-wider ${
-                          o.survived ? "text-emerald-300" : "text-crimson"
-                        }`}
-                      >
-                        {o.survived ? "Survived" : "Eliminated"}
+                      <span className="flex items-center gap-4">
+                        <span className="text-3xl" title="actual suit">
+                          <SuitIcon suit={o.actualSuit} />
+                        </span>
+                        <span className="text-white/40">→</span>
+                        <span className="text-3xl" title="guess">
+                          {o.guess ? (
+                            <SuitIcon suit={o.guess} />
+                          ) : (
+                            <span className="text-white/30">—</span>
+                          )}
+                        </span>
+                        <span
+                          className={`min-w-[7rem] text-right text-sm font-semibold uppercase tracking-wider ${
+                            o.survived ? "text-emerald-300" : "text-crimson"
+                          }`}
+                        >
+                          {o.survived ? "Survived" : "Eliminated"}
+                        </span>
                       </span>
-                    </span>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
             </li>
           ))}

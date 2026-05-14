@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import AvatarPicker, { makeInitialSeed } from "@/components/AvatarPicker";
 
 type Mode = "create" | "join";
 
@@ -10,6 +11,7 @@ export default function HomePage() {
   const [mode, setMode] = useState<Mode>("create");
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
+  const [avatarSeed, setAvatarSeed] = useState<string>(() => makeInitialSeed());
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -21,7 +23,7 @@ export default function HomePage() {
         const res = await fetch("/api/rooms", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ hostName: name }),
+          body: JSON.stringify({ hostName: name, avatarSeed }),
         });
         if (!res.ok) throw new Error((await res.json()).error ?? "Failed");
         const data = await res.json();
@@ -35,7 +37,7 @@ export default function HomePage() {
         const res = await fetch(`/api/rooms/${upper}/join`, {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ name }),
+          body: JSON.stringify({ name, avatarSeed }),
         });
         if (!res.ok) throw new Error((await res.json()).error ?? "Failed");
         const data = await res.json();
@@ -63,7 +65,7 @@ export default function HomePage() {
             Jack of <span className="text-crimson">Hearts</span>
           </h1>
           <p className="mt-3 text-white/60">
-            Six players. One traitor. Three minutes to figure out your suit.
+            Up to 8 players. One traitor. Two minutes to figure out your suit.
           </p>
         </header>
 
@@ -104,6 +106,10 @@ export default function HomePage() {
             />
           </label>
 
+          <div className="mt-4">
+            <AvatarPicker value={avatarSeed} onChange={setAvatarSeed} />
+          </div>
+
           {mode === "join" && (
             <label className="mt-4 block">
               <span className="text-xs uppercase tracking-wider text-white/60">
@@ -135,7 +141,7 @@ export default function HomePage() {
         </div>
 
         <p className="mt-8 text-center text-xs text-white/40">
-          Open six tabs, get on a Zoom, and try not to trust each other.
+          Open a tab per player, get on a Zoom, and try not to trust each other.
         </p>
       </div>
     </main>

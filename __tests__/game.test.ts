@@ -18,6 +18,7 @@ function makePlayer(id: string, overrides: Partial<Player> = {}): Player {
   return {
     id,
     name: id,
+    avatarSeed: id,
     suit: null,
     alive: true,
     joinedAt: 0,

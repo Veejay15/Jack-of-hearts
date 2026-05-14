@@ -1,5 +1,6 @@
 "use client";
 
+import Avatar from "./Avatar";
 import Countdown from "./Countdown";
 import SuitIcon from "./SuitIcon";
 import type { ClientGameState } from "@/lib/types";
@@ -27,7 +28,9 @@ export default function ResultScreen({
       </header>
 
       <ul className="mt-8 space-y-4">
-        {(last?.outcomes ?? []).map((o) => (
+        {(last?.outcomes ?? []).map((o) => {
+          const player = state.players.find((p) => p.id === o.playerId);
+          return (
           <li
             key={o.playerId}
             className={`flex items-center justify-between rounded-2xl border px-6 py-5 ${
@@ -36,7 +39,16 @@ export default function ResultScreen({
                 : "border-crimson/40 bg-crimson/10"
             }`}
           >
-            <span className="text-xl font-semibold">{o.name}</span>
+            <span className="flex items-center gap-3 text-xl font-semibold">
+              {player && (
+                <Avatar
+                  seed={player.avatarSeed}
+                  size={56}
+                  dead={!o.survived}
+                />
+              )}
+              <span>{o.name}</span>
+            </span>
             <span className="flex items-center gap-5">
               <span className="flex flex-col items-center">
                 <span className="text-[10px] uppercase tracking-wider text-white/50">
@@ -68,7 +80,8 @@ export default function ResultScreen({
               </span>
             </span>
           </li>
-        ))}
+          );
+        })}
       </ul>
     </div>
   );

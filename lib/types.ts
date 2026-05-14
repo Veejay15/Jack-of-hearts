@@ -13,6 +13,7 @@ export type Winner = "players" | "jack" | null;
 export type Player = {
   id: string;
   name: string;
+  avatarSeed: string;
   suit: Suit | null;
   alive: boolean;
   joinedAt: number;
@@ -55,10 +56,17 @@ export const MIN_PLAYERS = 4;
  * - jackId is hidden until game-over
  */
 export type ClientGameState = Omit<GameState, "players" | "jackId"> & {
-  you: { id: string; name: string; alive: boolean; isJack: boolean };
+  you: {
+    id: string;
+    name: string;
+    avatarSeed: string;
+    alive: boolean;
+    isJack: boolean;
+  };
   players: Array<{
     id: string;
     name: string;
+    avatarSeed: string;
     suit: Suit | null; // null for self mid-round, or for everyone in lobby
     alive: boolean;
   }>;

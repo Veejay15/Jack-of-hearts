@@ -15,6 +15,7 @@ export function projectForClient(
     .map((p) => ({
       id: p.id,
       name: p.name,
+      avatarSeed: p.avatarSeed ?? p.id,
       suit: p.id === viewerId ? null : p.suit,
       alive: p.alive,
     }));
@@ -22,8 +23,20 @@ export function projectForClient(
   const me = state.players[viewerId];
   const isJack = state.jackId !== null && state.jackId === viewerId;
   const you = me
-    ? { id: me.id, name: me.name, alive: me.alive, isJack }
-    : { id: viewerId, name: "?", alive: false, isJack: false };
+    ? {
+        id: me.id,
+        name: me.name,
+        avatarSeed: me.avatarSeed ?? me.id,
+        alive: me.alive,
+        isJack,
+      }
+    : {
+        id: viewerId,
+        name: "?",
+        avatarSeed: viewerId,
+        alive: false,
+        isJack: false,
+      };
 
   return {
     code: state.code,
