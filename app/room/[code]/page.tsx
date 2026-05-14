@@ -4,6 +4,7 @@ import Pusher, { type Channel } from "pusher-js";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import DiscussionRound from "@/components/DiscussionRound";
+import EliminatedScreen from "@/components/EliminatedScreen";
 import GameOver from "@/components/GameOver";
 import GuessPhase from "@/components/GuessPhase";
 import Lobby from "@/components/Lobby";
@@ -110,7 +111,21 @@ export default function RoomPage() {
 
     refresh();
 
+    // Safety net: poll state every 4s in case a Pusher event is dropped
+    // (browser background-tab throttling, network blip, etc.).
+    const pollId = setInterval(() => {
+      refresh();
+    }, 4000);
+
+    // Re-sync immediately when the tab comes back to the foreground.
+    const onVisible = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+
     return () => {
+      clearInterval(pollId);
+      document.removeEventListener("visibilitychange", onVisible);
       pusher.unsubscribe(`private-room-${code}`);
       pusher.unsubscribe(`private-player-${stored.playerId}`);
       pusher.disconnect();
@@ -202,12 +217,19 @@ export default function RoomPage() {
     );
   }
 
+  const eliminatedDuringActivePhase =
+    !state.you.alive &&
+    (state.phase === "discussion" || state.phase === "guess");
+
   return (
     <main className="px-6 py-10">
       {state.phase === "lobby" && (
         <Lobby state={state} isHost={isHost} onStart={onStart} />
       )}
-      {state.phase === "discussion" && (
+      {eliminatedDuringActivePhase && (
+        <EliminatedScreen state={state} onTimerZero={callAdvance} />
+      )}
+      {state.phase === "discussion" && state.you.alive && (
         <DiscussionRound
           state={state}
           recommendations={recs}
@@ -215,9 +237,10 @@ export default function RoomPage() {
           onTimerZero={callAdvance}
         />
       )}
-      {state.phase === "guess" && (
+      {state.phase === "guess" && state.you.alive && (
         <GuessPhase
           state={state}
+          recommendations={recs}
           onGuess={onGuess}
           onTimerZero={callAdvance}
         />
