@@ -65,7 +65,7 @@ export default function HomePage() {
             Jack of <span className="text-crimson">Hearts</span>
           </h1>
           <p className="mt-3 text-white/60">
-            Up to 8 players. One traitor. Two minutes to figure out your suit.
+            Up to 8 players. One traitor. One minute to figure out your suit.
           </p>
         </header>
 

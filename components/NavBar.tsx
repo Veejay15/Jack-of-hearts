@@ -77,11 +77,11 @@ export default function NavBar() {
 
               <div>
                 <h3 className="font-display text-lg font-semibold text-gold">
-                  Each round (2 min discussion + 1 min guess)
+                  Each round (1 min discussion + 1 min guess)
                 </h3>
                 <ul className="mt-1 list-disc space-y-1 pl-5 text-sm">
                   <li>
-                    During the 2-minute discussion, send a private suit
+                    During the 1-minute discussion, send a private suit
                     suggestion to any other player using the buttons under their
                     card. Only the recipient sees it.
                   </li>

@@ -44,7 +44,7 @@ export type GameState = {
   winner: Winner;
 };
 
-export const DISCUSSION_MS = 2 * 60 * 1000;
+export const DISCUSSION_MS = 1 * 60 * 1000;
 export const GUESS_MS = 60 * 1000;
 export const RESULT_MS = 8 * 1000;
 export const MAX_PLAYERS = 8;
