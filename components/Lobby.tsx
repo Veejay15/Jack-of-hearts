@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Avatar from "./Avatar";
 import type { ClientGameState } from "@/lib/types";
-import { MIN_PLAYERS } from "@/lib/types";
+import { MIN_PLAYERS, maxRoundsFor } from "@/lib/types";
 
 export default function Lobby({
   state,
@@ -38,9 +38,13 @@ export default function Lobby({
           <span className="text-sm uppercase tracking-wider text-white/60">
             Players ({count})
           </span>
-          {!canStart && (
+          {!canStart ? (
             <span className="text-xs text-white/50">
               need at least {MIN_PLAYERS}
+            </span>
+          ) : (
+            <span className="text-xs text-white/50">
+              Game runs up to {maxRoundsFor(count)} rounds
             </span>
           )}
         </div>

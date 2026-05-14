@@ -8,7 +8,16 @@ export type Phase =
   | "result"
   | "game-over";
 
-export type Winner = "players" | "jack" | null;
+export type Winner = "players" | "jack" | "draw" | null;
+
+/**
+ * Maximum rounds before a game ends in a draw. Equal to the total number
+ * of players who ever joined the room (alive + eliminated), so e.g. an
+ * 8-player game caps at 8 rounds.
+ */
+export function maxRoundsFor(playerCount: number): number {
+  return Math.max(1, playerCount);
+}
 
 export type Player = {
   id: string;

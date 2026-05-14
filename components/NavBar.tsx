@@ -124,6 +124,13 @@ export default function NavBar() {
                     </span>{" "}
                     if everyone else is eliminated.
                   </li>
+                  <li>
+                    <span className="text-gold font-semibold">Stalemate</span>{" "}
+                    if neither happens within the round budget — each game is
+                    capped at <span className="text-white">N rounds</span>{" "}
+                    where N is the number of players (e.g. 6 players → 6
+                    rounds).
+                  </li>
                 </ul>
               </div>
 

@@ -5,7 +5,7 @@ import Countdown from "./Countdown";
 import RecommendationsInbox from "./RecommendationsInbox";
 import { suitGlyph } from "./SuitIcon";
 import type { ClientGameState, Suit } from "@/lib/types";
-import { SUITS } from "@/lib/types";
+import { SUITS, maxRoundsFor } from "@/lib/types";
 
 export default function GuessPhase({
   state,
@@ -36,7 +36,7 @@ export default function GuessPhase({
     <div className="mx-auto max-w-6xl">
       <header className="mb-6 flex flex-col items-center text-center">
         <div className="text-xs uppercase tracking-[0.3em] text-gold/80">
-          Round {state.roundNumber} · Guess phase
+          Round {state.roundNumber} / {maxRoundsFor(state.players.length)} · Guess phase
         </div>
         <div className="mt-2 text-7xl font-bold tabular-nums">
           <Countdown endsAt={state.phaseEndsAt} onZero={onTimerZero} />

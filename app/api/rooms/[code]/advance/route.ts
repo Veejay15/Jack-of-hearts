@@ -15,6 +15,7 @@ import {
   DISCUSSION_MS,
   GUESS_MS,
   RESULT_MS,
+  maxRoundsFor,
   type GameState,
 } from "@/lib/types";
 
@@ -65,7 +66,16 @@ export async function POST(
     }
     case "guess": {
       const resolved = resolveGuesses(room);
-      const winner = checkWinCondition(resolved);
+      let winner = checkWinCondition(resolved);
+
+      // If no natural winner and we've finished the last allowed round,
+      // the game ends in a draw.
+      const totalPlayers = Object.keys(resolved.players).length;
+      const maxRounds = maxRoundsFor(totalPlayers);
+      const roundCapReached =
+        !winner && resolved.roundNumber >= maxRounds;
+      if (roundCapReached) winner = "draw";
+
       const aliveBreakdown = Object.values(resolved.players).map((p) => ({
         id: p.id,
         name: p.name,
@@ -75,7 +85,9 @@ export async function POST(
       console.log(
         `[advance:${code}] guess→${winner ? "game-over" : "result"} round=${
           resolved.roundNumber
-        } winner=${winner} jackId=${resolved.jackId} alive=`,
+        }/${maxRounds} winner=${winner} jackId=${
+          resolved.jackId
+        } alive=`,
         JSON.stringify(aliveBreakdown),
       );
       if (winner) {

@@ -15,22 +15,34 @@ export default function GameOver({
 }) {
   const jack = state.players.find((p) => p.id === state.jackId);
   const playersWon = state.winner === "players";
+  const isDraw = state.winner === "draw";
+
+  const bannerBorder = playersWon
+    ? "border-emerald-400/40 bg-emerald-400/10"
+    : isDraw
+      ? "border-gold/40 bg-gold/10"
+      : "border-crimson/40 bg-crimson/10";
+
+  const bannerTitle = playersWon
+    ? "Players win"
+    : isDraw
+      ? "Stalemate"
+      : "The Jack wins";
 
   return (
     <div className="mx-auto max-w-5xl text-center">
-      <div
-        className={`rounded-3xl border p-12 ${
-          playersWon
-            ? "border-emerald-400/40 bg-emerald-400/10"
-            : "border-crimson/40 bg-crimson/10"
-        }`}
-      >
+      <div className={`rounded-3xl border p-12 ${bannerBorder}`}>
         <div className="text-sm uppercase tracking-[0.4em] text-gold/80">
           Game over
         </div>
-        <h1 className="mt-4 text-6xl font-display font-bold">
-          {playersWon ? "Players win" : "The Jack wins"}
-        </h1>
+        <h1 className="mt-4 text-6xl font-display font-bold">{bannerTitle}</h1>
+        {isDraw && (
+          <p className="mt-4 text-lg text-white/80">
+            The round budget ran out without a winner. The Jack of Hearts
+            outlasted the deduction — but didn't manage to eliminate everyone
+            either.
+          </p>
+        )}
         {jack && (
           <div className="mt-6 flex flex-col items-center">
             <Avatar seed={jack.avatarSeed} size={120} dead={!jack.alive} />

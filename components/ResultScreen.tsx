@@ -3,7 +3,7 @@
 import Avatar from "./Avatar";
 import Countdown from "./Countdown";
 import SuitIcon from "./SuitIcon";
-import type { ClientGameState } from "@/lib/types";
+import { maxRoundsFor, type ClientGameState } from "@/lib/types";
 
 export default function ResultScreen({
   state,
@@ -17,7 +17,7 @@ export default function ResultScreen({
     <div className="mx-auto max-w-4xl">
       <header className="rounded-2xl border border-white/10 bg-velvet/60 px-8 py-6 text-center">
         <div className="text-sm uppercase tracking-[0.3em] text-gold/80">
-          Round {last?.round ?? state.roundNumber} · Result
+          Round {last?.round ?? state.roundNumber} / {maxRoundsFor(state.players.length)} · Result
         </div>
         <div className="mt-2 text-base text-white/70">
           Next round in{" "}

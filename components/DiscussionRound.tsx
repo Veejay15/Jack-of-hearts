@@ -6,7 +6,7 @@ import PlayerCard from "./PlayerCard";
 import RecommendationsInbox from "./RecommendationsInbox";
 import { suitGlyph } from "./SuitIcon";
 import type { ClientGameState, Suit } from "@/lib/types";
-import { SUITS } from "@/lib/types";
+import { SUITS, maxRoundsFor } from "@/lib/types";
 
 export default function DiscussionRound({
   state,
@@ -43,7 +43,7 @@ export default function DiscussionRound({
       <header className="flex items-center justify-between rounded-2xl border border-white/10 bg-velvet/60 px-5 py-4">
         <div>
           <div className="text-xs uppercase tracking-[0.3em] text-gold/80">
-            Round {state.roundNumber} · Discussion
+            Round {state.roundNumber} / {maxRoundsFor(state.players.length)} · Discussion
           </div>
           <div className="text-sm text-white/60">
             Whisper a suit to anyone. Choose wisely — one of you is lying.
