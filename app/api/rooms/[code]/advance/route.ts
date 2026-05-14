@@ -66,6 +66,18 @@ export async function POST(
     case "guess": {
       const resolved = resolveGuesses(room);
       const winner = checkWinCondition(resolved);
+      const aliveBreakdown = Object.values(resolved.players).map((p) => ({
+        id: p.id,
+        name: p.name,
+        alive: p.alive,
+        isJack: p.id === resolved.jackId,
+      }));
+      console.log(
+        `[advance:${code}] guess→${winner ? "game-over" : "result"} round=${
+          resolved.roundNumber
+        } winner=${winner} jackId=${resolved.jackId} alive=`,
+        JSON.stringify(aliveBreakdown),
+      );
       if (winner) {
         next = {
           ...resolved,
