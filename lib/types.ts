@@ -8,7 +8,7 @@ export type Phase =
   | "result"
   | "game-over";
 
-export type Winner = "players" | "jack" | "draw" | null;
+export type Winner = "players" | "jack" | null;
 
 /**
  * Maximum rounds before a game ends in a draw. Equal to the total number

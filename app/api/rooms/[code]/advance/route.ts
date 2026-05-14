@@ -69,12 +69,13 @@ export async function POST(
       let winner = checkWinCondition(resolved);
 
       // If no natural winner and we've finished the last allowed round,
-      // the game ends in a draw.
+      // the Jack outlasted the players and wins by default — the regular
+      // players failed to unmask them within the round budget.
       const totalPlayers = Object.keys(resolved.players).length;
       const maxRounds = maxRoundsFor(totalPlayers);
       const roundCapReached =
         !winner && resolved.roundNumber >= maxRounds;
-      if (roundCapReached) winner = "draw";
+      if (roundCapReached) winner = "jack";
 
       const aliveBreakdown = Object.values(resolved.players).map((p) => ({
         id: p.id,

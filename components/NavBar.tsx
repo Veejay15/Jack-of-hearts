@@ -125,11 +125,14 @@ export default function NavBar() {
                     if everyone else is eliminated.
                   </li>
                   <li>
-                    <span className="text-gold font-semibold">Stalemate</span>{" "}
-                    if neither happens within the round budget — each game is
-                    capped at <span className="text-white">N rounds</span>{" "}
-                    where N is the number of players (e.g. 6 players → 6
-                    rounds).
+                    Each game is capped at{" "}
+                    <span className="text-white">N rounds</span> where N is the
+                    number of players (e.g. 6 players → 6 rounds). If the Jack
+                    survives the final round,{" "}
+                    <span className="text-crimson font-semibold">
+                      the Jack wins
+                    </span>{" "}
+                    by default — any remaining players are considered defeated.
                   </li>
                 </ul>
               </div>

@@ -15,19 +15,19 @@ export default function GameOver({
 }) {
   const jack = state.players.find((p) => p.id === state.jackId);
   const playersWon = state.winner === "players";
-  const isDraw = state.winner === "draw";
 
   const bannerBorder = playersWon
     ? "border-emerald-400/40 bg-emerald-400/10"
-    : isDraw
-      ? "border-gold/40 bg-gold/10"
-      : "border-crimson/40 bg-crimson/10";
+    : "border-crimson/40 bg-crimson/10";
 
-  const bannerTitle = playersWon
-    ? "Players win"
-    : isDraw
-      ? "Stalemate"
-      : "The Jack wins";
+  const bannerTitle = playersWon ? "Players win" : "The Jack wins";
+
+  // If the Jack won while non-Jack players were still alive at the round
+  // cap, surface the "outlasted" framing so the result reads as intentional
+  // rather than a bug.
+  const jackOutlasted =
+    !playersWon &&
+    state.players.some((p) => p.alive && p.id !== state.jackId);
 
   return (
     <div className="mx-auto max-w-5xl text-center">
@@ -36,11 +36,10 @@ export default function GameOver({
           Game over
         </div>
         <h1 className="mt-4 text-6xl font-display font-bold">{bannerTitle}</h1>
-        {isDraw && (
+        {jackOutlasted && (
           <p className="mt-4 text-lg text-white/80">
-            The round budget ran out without a winner. The Jack of Hearts
-            outlasted the deduction — but didn't manage to eliminate everyone
-            either.
+            The round budget ran out and the Jack of Hearts was never
+            unmasked. The remaining players are considered defeated.
           </p>
         )}
         {jack && (
