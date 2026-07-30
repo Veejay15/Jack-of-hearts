@@ -51,6 +51,7 @@ export async function POST(
   room.guesses = {};
   room.history = [];
   room.winner = null;
+  room.rewards = [];
   room.phaseStartedAt = now;
   room.phaseEndsAt = now;
   await saveRoom(room);

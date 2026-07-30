@@ -1,6 +1,7 @@
 "use client";
 
 import Avatar from "./Avatar";
+import RewardPanel from "./RewardPanel";
 import SuitIcon from "./SuitIcon";
 import type { ClientGameState } from "@/lib/types";
 
@@ -8,10 +9,16 @@ export default function GameOver({
   state,
   isHost,
   onPlayAgain,
+  onReward,
 }: {
   state: ClientGameState;
   isHost: boolean;
   onPlayAgain: () => void;
+  onReward: (
+    category: string,
+    question: string,
+    targetId?: string,
+  ) => Promise<void>;
 }) {
   const jack = state.players.find((p) => p.id === state.jackId);
   const playersWon = state.winner === "players";
@@ -52,6 +59,8 @@ export default function GameOver({
           </div>
         )}
       </div>
+
+      <RewardPanel state={state} onReward={onReward} />
 
       <section className="mt-10 rounded-2xl border border-white/10 bg-velvet/40 p-8 text-left">
         <h2 className="text-base uppercase tracking-[0.25em] text-gold/80">

@@ -163,6 +163,25 @@ export default function NavBar() {
 
               <div>
                 <h3 className="font-display text-lg font-semibold text-gold">
+                  The forfeit
+                </h3>
+                <ul className="mt-1 list-disc space-y-1 pl-5 text-sm">
+                  <li>
+                    Winners get to put losers on the hot seat. If the Jack
+                    wins, they pick one question from a category (SEO, funny,
+                    and more) and choose which loser answers it live on the
+                    call.
+                  </li>
+                  <li>
+                    If the players win, every surviving winner picks a
+                    different question for the Jack — one Jack, many
+                    questions.
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-display text-lg font-semibold text-gold">
                   If you're the Jack
                 </h3>
                 <p className="mt-1 text-sm">

@@ -53,5 +53,6 @@ export function projectForClient(
       : {},
     history: state.history,
     winner: state.winner,
+    rewards: state.phase === "game-over" ? state.rewards ?? [] : [],
   };
 }

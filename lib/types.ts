@@ -39,6 +39,17 @@ export type RoundHistoryEntry = {
   }>;
 };
 
+/**
+ * A post-game forfeit: `askerId` (a winner) picked `question` for
+ * `targetId` (a loser) to answer out loud on the call.
+ */
+export type RewardAssignment = {
+  askerId: string;
+  targetId: string;
+  category: string;
+  question: string;
+};
+
 export type GameState = {
   code: string;
   hostId: string;
@@ -51,6 +62,8 @@ export type GameState = {
   guesses: Record<string, Suit>;
   history: RoundHistoryEntry[];
   winner: Winner;
+  // Optional so rooms created before this field existed still parse.
+  rewards?: RewardAssignment[];
 };
 
 export const DISCUSSION_MS = 1 * 60 * 1000;

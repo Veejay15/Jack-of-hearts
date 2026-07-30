@@ -48,6 +48,7 @@ export async function POST(
   room.phaseStartedAt = now;
   room.phaseEndsAt = now + DISCUSSION_MS;
   room.guesses = {};
+  room.rewards = [];
   await saveRoom(room);
 
   await pusherServer().trigger(channels.privateRoom(code), events.ROUND_STARTED, {

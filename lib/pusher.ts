@@ -34,4 +34,5 @@ export const events = {
   ROUND_RESULT: "round-result",
   GAME_OVER: "game-over",
   RECOMMENDATION: "recommendation",
+  REWARD_ASSIGNED: "reward-assigned",
 } as const;

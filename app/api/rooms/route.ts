@@ -45,6 +45,7 @@ export async function POST(req: Request) {
     guesses: {},
     history: [],
     winner: null,
+    rewards: [],
   };
   await saveRoom(state);
 

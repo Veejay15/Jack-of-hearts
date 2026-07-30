@@ -104,6 +104,7 @@ export default function RoomPage() {
     roomCh.bind("phase-changed", onAny);
     roomCh.bind("round-result", onAny);
     roomCh.bind("game-over", onAny);
+    roomCh.bind("reward-assigned", onAny);
 
     playerCh.bind(
       "recommendation",
@@ -180,6 +181,23 @@ export default function RoomPage() {
     [authedFetch, code],
   );
 
+  const onReward = useCallback(
+    async (category: string, question: string, targetId?: string) => {
+      const res = await authedFetch(`/api/rooms/${code}/reward`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ category, question, targetId }),
+      });
+      if (!res.ok) {
+        throw new Error(
+          (await res.json()).error ?? "Failed to send question",
+        );
+      }
+      await refresh();
+    },
+    [authedFetch, code, refresh],
+  );
+
   const onPlayAgain = useCallback(async () => {
     const res = await authedFetch(`/api/rooms/${code}/reset`, {
       method: "POST",
@@ -252,7 +270,12 @@ export default function RoomPage() {
         <ResultScreen state={state} onTimerZero={callAdvance} />
       )}
       {state.phase === "game-over" && (
-        <GameOver state={state} isHost={isHost} onPlayAgain={onPlayAgain} />
+        <GameOver
+          state={state}
+          isHost={isHost}
+          onPlayAgain={onPlayAgain}
+          onReward={onReward}
+        />
       )}
     </main>
   );
