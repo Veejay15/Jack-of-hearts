@@ -168,9 +168,9 @@ export default function NavBar() {
                 <ul className="mt-1 list-disc space-y-1 pl-5 text-sm">
                   <li>
                     Winners get to put losers on the hot seat. If the Jack
-                    wins, they pick one question from a category (SEO, funny,
-                    and more) and choose which loser answers it live on the
-                    call.
+                    wins, they pick a question from a category (SEO, funny,
+                    and more) for <em>each</em> losing player — everyone
+                    answers theirs live on the call.
                   </li>
                   <li>
                     If the players win, every surviving winner picks a

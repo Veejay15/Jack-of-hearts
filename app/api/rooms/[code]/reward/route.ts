@@ -15,9 +15,10 @@ const Body = z.object({
 });
 
 /**
- * Post-game forfeit. If the Jack won, the Jack picks one question and one
- * loser to answer it. If the players won, every surviving player picks one
- * question for the Jack — each question may only be used once.
+ * Post-game forfeit. If the Jack won, the Jack picks a question for every
+ * losing player — one each, no repeated questions. If the players won,
+ * every surviving player picks one question for the Jack — each question
+ * may only be used once.
  */
 export async function POST(
   req: Request,
@@ -57,19 +58,19 @@ export async function POST(
   }
 
   const rewards = room.rewards ?? [];
-  if (rewards.some((r) => r.askerId === me.id)) {
+  if (rewards.some((r) => r.question === question)) {
     return NextResponse.json(
-      { error: "You already picked a question" },
+      { error: "That question is already taken — pick another" },
       { status: 409 },
     );
   }
 
   let resolvedTargetId: string;
   if (room.winner === "jack") {
-    // Only the winning Jack asks, and they aim at any losing player.
+    // Only the winning Jack asks, one question per losing player.
     if (me.id !== room.jackId) {
       return NextResponse.json(
-        { error: "Only the Jack picks a question" },
+        { error: "Only the Jack picks the questions" },
         { status: 403 },
       );
     }
@@ -79,19 +80,24 @@ export async function POST(
         { status: 400 },
       );
     }
+    if (rewards.some((r) => r.targetId === targetId)) {
+      return NextResponse.json(
+        { error: "That player already has a question" },
+        { status: 409 },
+      );
+    }
     resolvedTargetId = targetId;
   } else {
-    // Players won: surviving non-Jack players each ask the Jack, and no
-    // two winners may reuse the same question.
+    // Players won: surviving non-Jack players each ask the Jack once.
     if (me.id === room.jackId || !me.alive) {
       return NextResponse.json(
         { error: "Only surviving winners pick questions" },
         { status: 403 },
       );
     }
-    if (rewards.some((r) => r.question === question)) {
+    if (rewards.some((r) => r.askerId === me.id)) {
       return NextResponse.json(
-        { error: "That question is already taken — pick another" },
+        { error: "You already picked a question" },
         { status: 409 },
       );
     }

@@ -6,9 +6,9 @@ import { REWARD_CATEGORIES } from "@/lib/questions";
 import type { ClientGameState } from "@/lib/types";
 
 /**
- * Post-game forfeit. Jack won → the Jack picks one question and one loser
- * to answer it on the call. Players won → every surviving winner picks a
- * distinct question for the Jack.
+ * Post-game forfeit. Jack won → the Jack picks a distinct question for
+ * every loser to answer on the call. Players won → every surviving winner
+ * picks a distinct question for the Jack.
  */
 export default function RewardPanel({
   state,
@@ -38,11 +38,10 @@ export default function RewardPanel({
   );
 
   const alreadyAsked = rewards.some((r) => r.askerId === you.id);
+  const expectedAsks = jackWon ? losers.length : winners.length;
   const canAsk = jackWon
-    ? you.isJack && !alreadyAsked
+    ? you.isJack && rewards.length < expectedAsks
     : !you.isJack && you.alive && !alreadyAsked;
-
-  const expectedAsks = jackWon ? 1 : winners.length;
   const usedQuestions = new Set(rewards.map((r) => r.question));
   const category =
     REWARD_CATEGORIES.find((c) => c.id === categoryId) ?? REWARD_CATEGORIES[0];
@@ -75,7 +74,7 @@ export default function RewardPanel({
       </h2>
       <p className="mt-2 text-sm text-white/70">
         {jackWon
-          ? `${jack?.name ?? "The Jack"} picks one question and one loser — the chosen player answers it live on the call.`
+          ? `${jack?.name ?? "The Jack"} picks a different question for every loser — each of you answers yours live on the call.`
           : `Each surviving winner picks a different question for ${jack?.name ?? "the Jack"} to answer live on the call.`}
       </p>
 
@@ -120,7 +119,7 @@ export default function RewardPanel({
 
           <ul className="mt-4 space-y-2">
             {category.questions.map((q) => {
-              const taken = !jackWon && usedQuestions.has(q);
+              const taken = usedQuestions.has(q);
               return (
                 <li key={q}>
                   <button
@@ -152,20 +151,27 @@ export default function RewardPanel({
                 Who has to answer it?
               </div>
               <div className="mt-3 flex flex-wrap gap-3">
-                {losers.map((p) => (
-                  <button
-                    key={p.id}
-                    onClick={() => setTargetId(p.id)}
-                    className={`flex items-center gap-2 rounded-xl border px-4 py-2 transition ${
-                      targetId === p.id
-                        ? "border-gold bg-gold/15 text-gold"
-                        : "border-white/10 bg-ink/40 text-white/85 hover:border-gold/50"
-                    }`}
-                  >
-                    <Avatar seed={p.avatarSeed} size={28} />
-                    <span className="text-sm font-medium">{p.name}</span>
-                  </button>
-                ))}
+                {losers.map((p) => {
+                  const assigned = rewards.some((r) => r.targetId === p.id);
+                  return (
+                    <button
+                      key={p.id}
+                      disabled={assigned}
+                      onClick={() => setTargetId(p.id)}
+                      className={`flex items-center gap-2 rounded-xl border px-4 py-2 transition ${
+                        targetId === p.id
+                          ? "border-gold bg-gold/15 text-gold"
+                          : assigned
+                            ? "cursor-not-allowed border-white/5 bg-ink/20 text-white/30"
+                            : "border-white/10 bg-ink/40 text-white/85 hover:border-gold/50"
+                      }`}
+                    >
+                      <Avatar seed={p.avatarSeed} size={28} />
+                      <span className="text-sm font-medium">{p.name}</span>
+                      {assigned && <span className="text-xs">✓</span>}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -206,7 +212,7 @@ export default function RewardPanel({
       {rewards.length < expectedAsks && !canAsk && (
         <p className="mt-6 text-sm text-white/60">
           {jackWon
-            ? `Waiting for ${jack?.name ?? "the Jack"} to pick a question…`
+            ? `Waiting for ${jack?.name ?? "the Jack"} to pick questions… (${rewards.length}/${expectedAsks})`
             : `Waiting for the winners to pick questions… (${rewards.length}/${expectedAsks})`}
         </p>
       )}
