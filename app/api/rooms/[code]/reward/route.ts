@@ -19,6 +19,10 @@ const Body = z.object({
  * losing player — one each, no repeated questions. If the players won,
  * every surviving player picks one question for the Jack — each question
  * may only be used once.
+ *
+ * Re-submitting for a target that already has a question REPLACES it (for
+ * when someone refuses to answer). The refused question stays burned: it
+ * can never be picked again this game.
  */
 export async function POST(
   req: Request,
@@ -58,9 +62,10 @@ export async function POST(
   }
 
   const rewards = room.rewards ?? [];
-  if (rewards.some((r) => r.question === question)) {
+  const used = room.usedQuestions ?? rewards.map((r) => r.question);
+  if (used.includes(question)) {
     return NextResponse.json(
-      { error: "That question is already taken — pick another" },
+      { error: "That question is already used — pick another" },
       { status: 409 },
     );
   }
@@ -80,34 +85,34 @@ export async function POST(
         { status: 400 },
       );
     }
-    if (rewards.some((r) => r.targetId === targetId)) {
-      return NextResponse.json(
-        { error: "That player already has a question" },
-        { status: 409 },
-      );
-    }
     resolvedTargetId = targetId;
   } else {
-    // Players won: surviving non-Jack players each ask the Jack once.
+    // Players won: surviving non-Jack players each ask the Jack.
     if (me.id === room.jackId || !me.alive) {
       return NextResponse.json(
         { error: "Only surviving winners pick questions" },
         { status: 403 },
       );
     }
-    if (rewards.some((r) => r.askerId === me.id)) {
-      return NextResponse.json(
-        { error: "You already picked a question" },
-        { status: 409 },
-      );
-    }
     resolvedTargetId = room.jackId;
   }
 
-  room.rewards = [
-    ...rewards,
-    { askerId: me.id, targetId: resolvedTargetId, category, question },
-  ];
+  // One assignment per (asker, target) pair — a second submission for the
+  // same slot replaces the question rather than stacking a new one.
+  const slotIndex = rewards.findIndex(
+    (r) => r.askerId === me.id && r.targetId === resolvedTargetId,
+  );
+  const entry = {
+    askerId: me.id,
+    targetId: resolvedTargetId,
+    category,
+    question,
+  };
+  room.rewards =
+    slotIndex >= 0
+      ? rewards.map((r, i) => (i === slotIndex ? entry : r))
+      : [...rewards, entry];
+  room.usedQuestions = [...used, question];
   await saveRoom(room);
 
   await pusherServer().trigger(

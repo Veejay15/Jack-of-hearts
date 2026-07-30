@@ -24,6 +24,9 @@ export default function RewardPanel({
   const [categoryId, setCategoryId] = useState(REWARD_CATEGORIES[0].id);
   const [question, setQuestion] = useState<string | null>(null);
   const [targetId, setTargetId] = useState<string | null>(null);
+  // When set, the picker is replacing an existing question after a refusal:
+  // the target's id in Jack-won mode, or "self" in players-won mode.
+  const [swapFor, setSwapFor] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,7 +45,10 @@ export default function RewardPanel({
   const canAsk = jackWon
     ? you.isJack && rewards.length < expectedAsks
     : !you.isJack && you.alive && !alreadyAsked;
-  const usedQuestions = new Set(rewards.map((r) => r.question));
+  const usedQuestions = new Set(
+    state.usedQuestions ?? rewards.map((r) => r.question),
+  );
+  const showPicker = canAsk || swapFor !== null;
   const category =
     REWARD_CATEGORIES.find((c) => c.id === categoryId) ?? REWARD_CATEGORIES[0];
 
@@ -52,14 +58,16 @@ export default function RewardPanel({
   const myForfeits = rewards.filter((r) => r.targetId === you.id);
 
   const submit = async () => {
+    const resolvedTarget = jackWon ? (swapFor ?? targetId) : undefined;
     if (!question || busy) return;
-    if (jackWon && !targetId) return;
+    if (jackWon && !resolvedTarget) return;
     setBusy(true);
     setError(null);
     try {
-      await onReward(categoryId, question, jackWon ? targetId! : undefined);
+      await onReward(categoryId, question, resolvedTarget ?? undefined);
       setQuestion(null);
       setTargetId(null);
+      setSwapFor(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to send question");
     } finally {
@@ -95,8 +103,26 @@ export default function RewardPanel({
       ))}
 
       {/* Picker for whoever gets to ask */}
-      {canAsk && (
+      {showPicker && (
         <div className="mt-6">
+          {swapFor && (
+            <div className="mb-4 flex items-center gap-3 rounded-xl border border-gold/40 bg-gold/10 px-4 py-2 text-sm text-gold">
+              <span>
+                Picking a replacement
+                {jackWon ? ` for ${nameOf(swapFor)}` : ""} — the refused
+                question stays burned.
+              </span>
+              <button
+                onClick={() => {
+                  setSwapFor(null);
+                  setQuestion(null);
+                }}
+                className="rounded-md border border-gold/40 px-2 py-0.5 text-xs uppercase tracking-wider hover:bg-gold/20"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
           <div className="flex flex-wrap gap-2">
             {REWARD_CATEGORIES.map((c) => (
               <button
@@ -145,7 +171,7 @@ export default function RewardPanel({
             })}
           </ul>
 
-          {jackWon && (
+          {jackWon && !swapFor && (
             <div className="mt-6">
               <div className="text-xs uppercase tracking-[0.3em] text-gold/80">
                 Who has to answer it?
@@ -178,10 +204,16 @@ export default function RewardPanel({
 
           <button
             onClick={submit}
-            disabled={!question || (jackWon && !targetId) || busy}
+            disabled={
+              !question || (jackWon && !(swapFor ?? targetId)) || busy
+            }
             className="mt-6 rounded-xl bg-crimson px-6 py-2.5 font-semibold uppercase tracking-wider text-white transition hover:bg-crimson/90 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {busy ? "Sending…" : "Lock in question"}
+            {busy
+              ? "Sending…"
+              : swapFor
+                ? "Send replacement"
+                : "Lock in question"}
           </button>
           {error && <p className="mt-3 text-sm text-crimson">{error}</p>}
         </div>
@@ -192,17 +224,31 @@ export default function RewardPanel({
         <ul className="mt-6 space-y-2">
           {rewards.map((r) => (
             <li
-              key={`${r.askerId}-${r.question}`}
-              className="rounded-xl bg-ink/40 px-4 py-3 text-sm"
+              key={`${r.askerId}-${r.targetId}`}
+              className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-ink/40 px-4 py-3 text-sm"
             >
-              <span className="font-semibold text-gold">
-                {nameOf(r.askerId)}
-              </span>{" "}
-              asks{" "}
-              <span className="font-semibold text-crimson">
-                {nameOf(r.targetId)}
+              <span>
+                <span className="font-semibold text-gold">
+                  {nameOf(r.askerId)}
+                </span>{" "}
+                asks{" "}
+                <span className="font-semibold text-crimson">
+                  {nameOf(r.targetId)}
+                </span>
+                : <span className="text-white/85">{r.question}</span>
               </span>
-              : <span className="text-white/85">{r.question}</span>
+              {r.askerId === you.id && (
+                <button
+                  onClick={() => {
+                    setSwapFor(jackWon ? r.targetId : "self");
+                    setQuestion(null);
+                    setError(null);
+                  }}
+                  className="rounded-md border border-white/15 px-2 py-1 text-xs uppercase tracking-wider text-white/60 transition hover:border-gold/50 hover:text-gold"
+                >
+                  Refused? Swap it
+                </button>
+              )}
             </li>
           ))}
         </ul>

@@ -64,6 +64,9 @@ export type GameState = {
   winner: Winner;
   // Optional so rooms created before this field existed still parse.
   rewards?: RewardAssignment[];
+  // Every question ever assigned this game, including ones swapped out
+  // after a refusal — burned questions can't be picked again.
+  usedQuestions?: string[];
 };
 
 export const DISCUSSION_MS = 1 * 60 * 1000;

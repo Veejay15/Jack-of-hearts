@@ -177,6 +177,11 @@ export default function NavBar() {
                     different question for the Jack — one Jack, many
                     questions.
                   </li>
+                  <li>
+                    Someone refused to answer? The asker can swap in a
+                    replacement question — but the refused one is burned and
+                    can&apos;t be picked again.
+                  </li>
                 </ul>
               </div>
 
