@@ -73,6 +73,12 @@ export default function NavBar() {
                     . They get a private banner telling them their role.
                   </li>
                 </ul>
+                <img
+                  src="/how-to-play/jack-role.png"
+                  alt="The Jack of Hearts' view during discussion: a secret role banner, your own hidden card, and the other players' visible suits with whisper buttons"
+                  loading="lazy"
+                  className="mt-3 w-full rounded-xl border border-white/10"
+                />
               </div>
 
               <div>
@@ -105,6 +111,18 @@ export default function NavBar() {
                     the Jack.
                   </li>
                 </ul>
+                <img
+                  src="/how-to-play/guess-phase.jpg"
+                  alt="The guess phase: pick one of the four suits before the timer runs out, using the whispers other players sent you"
+                  loading="lazy"
+                  className="mt-3 w-full rounded-xl border border-white/10"
+                />
+                <img
+                  src="/how-to-play/eliminated.jpg"
+                  alt="The eliminated screen: a wrong guess knocks you out, but you can keep watching the survivors"
+                  loading="lazy"
+                  className="mt-3 w-full rounded-xl border border-white/10"
+                />
               </div>
 
               <div>
@@ -135,6 +153,12 @@ export default function NavBar() {
                     by default — any remaining players are considered defeated.
                   </li>
                 </ul>
+                <img
+                  src="/how-to-play/game-over.jpg"
+                  alt="The game-over screen: the winner is announced, the Jack is unmasked, and a round recap shows everyone's guesses"
+                  loading="lazy"
+                  className="mt-3 w-full rounded-xl border border-white/10"
+                />
               </div>
 
               <div>
