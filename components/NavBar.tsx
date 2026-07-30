@@ -154,8 +154,7 @@ export default function NavBar() {
                   Tip
                 </h3>
                 <p className="mt-1 text-sm">
-                  Get on a Zoom or Discord call together while you play. Trash
-                  talk is part of the game.
+                  Get on a Zoom or Discord call together while you play.
                 </p>
               </div>
             </section>
