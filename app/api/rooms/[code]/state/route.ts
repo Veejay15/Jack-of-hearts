@@ -27,5 +27,5 @@ export async function GET(
   const view = projectForClient(room, auth.playerId);
   const recommendations = await getRecommendations(code, auth.playerId);
 
-  return NextResponse.json({ state: view, recommendations });
+  return NextResponse.json({ state: view, recommendations, serverNow: Date.now() });
 }

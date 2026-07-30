@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { serverNow } from "@/lib/clock";
 
 export default function Countdown({
   endsAt,
@@ -9,10 +10,10 @@ export default function Countdown({
   endsAt: number;
   onZero?: () => void;
 }) {
-  const [now, setNow] = useState(() => Date.now());
+  const [now, setNow] = useState(() => serverNow());
 
   useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 200);
+    const id = setInterval(() => setNow(serverNow()), 200);
     return () => clearInterval(id);
   }, []);
 

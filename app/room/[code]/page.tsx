@@ -9,6 +9,7 @@ import GameOver from "@/components/GameOver";
 import GuessPhase from "@/components/GuessPhase";
 import Lobby from "@/components/Lobby";
 import ResultScreen from "@/components/ResultScreen";
+import { syncServerClock } from "@/lib/clock";
 import type { ClientGameState, Suit } from "@/lib/types";
 
 type Stored = { playerId: string; token: string };
@@ -66,10 +67,12 @@ export default function RoomPage() {
       setError((await res.json()).error ?? `Error ${res.status}`);
       return;
     }
-    const { state: next, recommendations } = (await res.json()) as {
+    const { state: next, recommendations, serverNow } = (await res.json()) as {
       state: ClientGameState;
       recommendations: Record<string, Suit>;
+      serverNow?: number;
     };
+    if (serverNow) syncServerClock(serverNow);
     setState(next);
     setRecs(recommendations ?? {});
   }, [authedFetch, code, stored]);
