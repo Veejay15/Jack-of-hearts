@@ -12,7 +12,14 @@ export default function RecommendationsInbox({
 }) {
   const nameOf = (id: string) =>
     state.players.find((p) => p.id === id)?.name ?? "?";
-  const entries = Object.entries(recommendations);
+  // Redis hashes return fields in arbitrary order, so each poll could
+  // reshuffle the list — pin it to the senders' join order instead.
+  const joinOrder = new Map(state.players.map((p, i) => [p.id, i]));
+  const entries = Object.entries(recommendations).sort(
+    (a, b) =>
+      (joinOrder.get(a[0]) ?? Number.MAX_SAFE_INTEGER) -
+      (joinOrder.get(b[0]) ?? Number.MAX_SAFE_INTEGER),
+  );
   return (
     <aside className="rounded-2xl border border-white/10 bg-velvet/60 p-5">
       <h3 className="text-sm uppercase tracking-[0.25em] text-gold/80">
