@@ -183,6 +183,12 @@ export default function NavBar() {
                     can&apos;t be picked again.
                   </li>
                 </ul>
+                <img
+                  src="/how-to-play/forfeit.jpg"
+                  alt="The forfeit panel after the Jack wins: your assigned question is highlighted in a red card reading 'Your forfeit — answer on the call'"
+                  loading="lazy"
+                  className="mt-3 w-full rounded-xl border border-white/10"
+                />
               </div>
 
               <div>
